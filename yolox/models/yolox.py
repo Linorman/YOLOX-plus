@@ -3,6 +3,7 @@
 # Copyright (c) Megvii Inc. All rights reserved.
 
 import torch.nn as nn
+from yolox.models.yolo_pafpn_color import YOLOPAFPNColor
 
 from .yolo_head import YOLOXHead
 from .yolo_pafpn import YOLOPAFPN
@@ -17,8 +18,10 @@ class YOLOX(nn.Module):
 
     def __init__(self, backbone=None, head=None):
         super().__init__()
+        # if backbone is None:
+        #     backbone = YOLOPAFPN()
         if backbone is None:
-            backbone = YOLOPAFPN()
+            backbone = YOLOPAFPNColor()
         if head is None:
             head = YOLOXHead(80)
 

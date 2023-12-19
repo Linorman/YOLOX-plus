@@ -4,7 +4,6 @@
 
 from torch import nn
 
-from .color_attension import ColorAttentionModule
 from .network_blocks import BaseConv, CSPLayer, DWConv, Focus, ResLayer, SPPBottleneck
 
 
@@ -13,11 +12,11 @@ class Darknet(nn.Module):
     depth2blocks = {21: [1, 2, 2, 1], 53: [2, 8, 8, 4]}
 
     def __init__(
-        self,
-        depth,
-        in_channels=3,
-        stem_out_channels=32,
-        out_features=("dark3", "dark4", "dark5"),
+            self,
+            depth,
+            in_channels=3,
+            stem_out_channels=32,
+            out_features=("dark3", "dark4", "dark5"),
     ):
         """
         Args:
@@ -97,12 +96,12 @@ class Darknet(nn.Module):
 
 class CSPDarknet(nn.Module):
     def __init__(
-        self,
-        dep_mul,
-        wid_mul,
-        out_features=("dark3", "dark4", "dark5"),
-        depthwise=False,
-        act="silu",
+            self,
+            dep_mul,
+            wid_mul,
+            out_features=("dark3", "dark4", "dark5"),
+            depthwise=False,
+            act="silu",
     ):
         super().__init__()
         assert out_features, "please provide output features of Darknet"
@@ -176,30 +175,5 @@ class CSPDarknet(nn.Module):
         x = self.dark4(x)
         outputs["dark4"] = x
         x = self.dark5(x)
-        outputs["dark5"] = x
-        return {k: v for k, v in outputs.items() if k in self.out_features}
-
-
-class ColorCSPDarknet(CSPDarknet):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.color_attention_dark3 = ColorAttentionModule(in_channels=512)  # 根据你的需求设置输入通道数
-        self.color_attention_dark4 = ColorAttentionModule(in_channels=1024)  # 根据你的需求设置输入通道数
-        self.color_attention_dark5 = ColorAttentionModule(in_channels=2048)  # 根据你的需求设置输入通道数
-
-    def forward(self, x):
-        outputs = {}
-        x = self.stem(x)
-        outputs["stem"] = x
-        x = self.dark2(x)
-        outputs["dark2"] = x
-        x = self.dark3(x)
-        x = self.color_attention_dark3(x)  # 在dark3层之后添加颜色注意力模块
-        outputs["dark3"] = x
-        x = self.dark4(x)
-        x = self.color_attention_dark4(x)  # 在dark4层之后添加颜色注意力模块
-        outputs["dark4"] = x
-        x = self.dark5(x)
-        x = self.color_attention_dark5(x)  # 在dark5层之后添加颜色注意力模块
         outputs["dark5"] = x
         return {k: v for k, v in outputs.items() if k in self.out_features}
