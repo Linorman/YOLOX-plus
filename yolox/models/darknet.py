@@ -4,6 +4,7 @@
 
 from torch import nn
 
+from .color_attension import ColorAttentionModule
 from .network_blocks import BaseConv, CSPLayer, DWConv, Focus, ResLayer, SPPBottleneck
 
 
@@ -175,5 +176,30 @@ class CSPDarknet(nn.Module):
         x = self.dark4(x)
         outputs["dark4"] = x
         x = self.dark5(x)
+        outputs["dark5"] = x
+        return {k: v for k, v in outputs.items() if k in self.out_features}
+
+
+class ColorCSPDarknet(CSPDarknet):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.color_attention_dark3 = ColorAttentionModule(in_channels=512)  # 根据你的需求设置输入通道数
+        self.color_attention_dark4 = ColorAttentionModule(in_channels=1024)  # 根据你的需求设置输入通道数
+        self.color_attention_dark5 = ColorAttentionModule(in_channels=2048)  # 根据你的需求设置输入通道数
+
+    def forward(self, x):
+        outputs = {}
+        x = self.stem(x)
+        outputs["stem"] = x
+        x = self.dark2(x)
+        outputs["dark2"] = x
+        x = self.dark3(x)
+        x = self.color_attention_dark3(x)  # 在dark3层之后添加颜色注意力模块
+        outputs["dark3"] = x
+        x = self.dark4(x)
+        x = self.color_attention_dark4(x)  # 在dark4层之后添加颜色注意力模块
+        outputs["dark4"] = x
+        x = self.dark5(x)
+        x = self.color_attention_dark5(x)  # 在dark5层之后添加颜色注意力模块
         outputs["dark5"] = x
         return {k: v for k, v in outputs.items() if k in self.out_features}
