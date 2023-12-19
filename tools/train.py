@@ -135,6 +135,8 @@ if __name__ == "__main__":
         exp.dataset = exp.get_dataset(cache=True, cache_type=args.cache)
 
     dist_url = "auto" if args.dist_url is None else args.dist_url
+
+    print("Start training")
     launch(
         main,
         num_gpu,
@@ -144,3 +146,5 @@ if __name__ == "__main__":
         dist_url=dist_url,
         args=(exp, args),
     )
+
+    print("Done! Trained by Huo Zhiyu, Student ID: 2021302111315, WHU.")

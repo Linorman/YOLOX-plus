@@ -186,7 +186,8 @@ class COCOEvaluator:
             data_list.extend(data_list_elem)
             output_data.update(image_wise_data)
 
-        statistics = torch.cuda.FloatTensor([inference_time, nms_time, n_samples])
+        # statistics = torch.cuda.FloatTensor([inference_time, nms_time, n_samples])
+        statistics = torch.tensor([inference_time, nms_time, n_samples], device='cuda')
         if distributed:
             # different process/device might have different speed,
             # to make sure the process will not be stucked, sync func is used here.

@@ -218,3 +218,5 @@ if __name__ == "__main__":
         dist_url=dist_url,
         args=(exp, args, num_gpu),
     )
+
+    print("Done! Evaluate finished by Huo Zhiyu, student ID: 2021302111315, WHU.")
