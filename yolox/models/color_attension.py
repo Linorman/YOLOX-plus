@@ -43,7 +43,9 @@ class ColorAttentionBlock(nn.Module):
     def __init__(self, channel, ratio=8, kernel_size=7):
         super(ColorAttentionBlock, self).__init__()
         self.channel_attention = ChannelAttention(channel, ratio=ratio)
+        self.spatial_attention = SpatialAttention(kernel_size=kernel_size)
 
     def forward(self, x):
         x = x * self.channel_attention(x)
+        x = x * self.spatial_attention(x)
         return x
