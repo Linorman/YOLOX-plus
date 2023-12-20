@@ -148,8 +148,6 @@ class COCODataset(CacheDataset):
         img = cv2.imread(img_file)
         assert img is not None, f"file named {img_file} not found"
 
-        # Convert the image from BGR to HSV format
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         return img
 
     @cache_read_img(use_cache=True)
