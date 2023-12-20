@@ -37,14 +37,14 @@ class COCODataset(CacheDataset):
     """
 
     def __init__(
-        self,
-        data_dir=None,
-        json_file="instances_train2017.json",
-        name="train2017",
-        img_size=(416, 416),
-        preproc=None,
-        cache=False,
-        cache_type="ram",
+            self,
+            data_dir=None,
+            json_file="instances_train2017.json",
+            name="train2017",
+            img_size=(416, 416),
+            preproc=None,
+            cache=False,
+            cache_type="ram",
     ):
         """
         COCO dataset initialization. Annotation data are read into memory by COCO API.
@@ -148,6 +148,8 @@ class COCODataset(CacheDataset):
         img = cv2.imread(img_file)
         assert img is not None, f"file named {img_file} not found"
 
+        # Convert the image from BGR to HSV format
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         return img
 
     @cache_read_img(use_cache=True)
